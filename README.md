@@ -21,7 +21,7 @@ The idea is to divide the app to components where each component has it's own BL
 
 The relation between the component and the bloc is described in the following diagram:
 
-![bloc component diagram](http://shimaatech.com/wp-content/uploads/2020/01/bloc_component_diagram.png)
+![bloc component diagram](https://shimaatech.com/wp-content/uploads/2020/01/bloc_component_diagram.png)
 
 As we see in the diagram, the BLoC is used for managing the state of the component. Each component
 has its own BLoC and view.  
@@ -29,7 +29,7 @@ The component view sends events to the bloc, and the bloc updates the view state
 
 The following diagram describes the relationship between the different components in the app
 
-![components relationship diagram](http://shimaatech.com/wp-content/uploads/2020/01/components_diagram.png)
+![components relationship diagram](https://shimaatech.com/wp-content/uploads/2020/01/components_diagram.png)
 
 Because each component has one bloc only, sharing states between components should be done through
 services and listeners that are provided by the services.  
