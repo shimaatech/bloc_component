@@ -1,12 +1,23 @@
 # bloc_component
 
-A library that helps structuring flutter apps using the BLoC library
-For more info please check the [docs]
+A library that helps structuring flutter apps using the BLoC library.  
+It makes it easier to:
+- structure your app into components and manage the state of each component separately.
+- Maintain your app
+- Add new pages and features
+
+
+### Links
+- [pub.dev package](https://pub.dev/packages/bloc_component)
+- [github repository](https://github.com/shimaatech/bloc_component)
+- [API reference](https://pub.dev/documentation/bloc_component/latest/bloc_component/bloc_component-library.html)
+
 
 ## Getting Started
 
 This library is built upon the flutter [bloc](https://pub.dev/packages/bloc) library.
 It allows developers to structure their app into components, where each component has its own bloc.
+
 
 ## Examples
 
@@ -420,4 +431,4 @@ void main() {
 ![Movies App demo](https://media.giphy.com/media/eIyX1CUFzQkgjV8IMG/giphy.gif)
 
 
-For more info please refer to the [docs]
+For more info please refer to the [docs](https://pub.dev/documentation/bloc_component/latest) and [API reference](https://pub.dev/documentation/bloc_component/latest/bloc_component/bloc_component-library.html)
