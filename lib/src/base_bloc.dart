@@ -1,31 +1,28 @@
 import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
 
-/// BlocState
+/// Bloc bas state
 /// All states must inherit from [BlocState]
 abstract class BlocState implements Equatable {
   @override
   List<Object> get props => [];
 }
 
-/// StateInitial
 /// The initial state of any bloc that extends [BaseBloc]
 class StateInitial extends BlocState {}
 
-/// StateLoading
+/// Bloc loading state
 /// Each state that needs to allow loading functionality to be used with
 /// the [StateBuilder] must be implemented with [StateLoading]
 mixin StateLoading implements BlocState {}
 
-/// StateError
+/// Bloc error state
 /// Each state that needs tto allow error functionality to be used with the
 /// [StateBuilder[ must be implemented with [StateError]
 mixin StateError implements BlocState {
   String get message;
 }
 
-
-/// StateInitializing
 /// A state that indicates that the bloc is being initialized. Allows reporting
 /// [progress] of initializing
 /// This state is implemented with [StateLoading] so that it can be used as
@@ -37,11 +34,8 @@ class StateInitializing with StateLoading {
 
   @override
   List<Object> get props => [progress];
-
 }
 
-
-/// StateInitializationError
 /// Emitted when there is an issue with initializing the bloc. It contains
 /// the error [message], [exception] and [stacktrace]
 /// This state is implemented with [StateError] so that it can be used as an
@@ -55,13 +49,10 @@ class StateInitializationError with StateError {
 
   @override
   List<Object> get props => [message, exception];
-
 }
 
-/// StateInitialized
 /// A state that indicates that the bloc is initialized
 class StateInitialized extends BlocState {}
-
 
 /// Base bloc event
 /// All events must inherit from [BlocEvent]
@@ -70,11 +61,9 @@ class BlocEvent extends Equatable {
   List<Object> get props => [];
 }
 
-/// InitializeEvent
 /// An event for initializing the blocs that inherit from [BaseBloc]
 /// This event is dispatched when the bloc is created
 class InitializeEvent extends BlocEvent {}
-
 
 /// A base bloc that extends the Bloc class for providing additional
 /// functionality. When the bloc is created, and [InitializeEvent] is dispatched.
@@ -83,7 +72,6 @@ class InitializeEvent extends BlocEvent {}
 /// [onInitialized] method
 abstract class BaseBloc<E extends BlocEvent, S extends BlocState>
     extends Bloc<BlocEvent, BlocState> {
-
   bool _initialized = false;
 
   BaseBloc() {
@@ -116,6 +104,7 @@ abstract class BaseBloc<E extends BlocEvent, S extends BlocState>
 
   @override
   @deprecated
+
   /// This method is deprecated. Use the [event] method instead for adding
   /// events to the bloc
   void add(BlocEvent e) {

@@ -17,13 +17,23 @@ It makes it easier to:
 
 This library is built upon the flutter [bloc](https://pub.dev/packages/bloc) library.
 It allows developers to structure their app into components, where each component has its own bloc.
+The idea is to divide the app to components where each component has it's own BLoC and view.  
 
+The relation between the component and the bloc is described in the following diagram:
 
-## Examples
+![bloc component diagram](http://shimaatech.com/wp-content/uploads/2020/01/bloc_component_diagram.png)
 
-[Movies App](https://github.com/shimaatech/bloc_component/tree/master/examples)
+As we see in the diagram, the BLoC is used for managing the state of the component. Each component
+has its own BLoC and view.  
+The component view sends events to the bloc, and the bloc updates the view state.
 
-![Movies App demo](https://media.giphy.com/media/eIyX1CUFzQkgjV8IMG/giphy.gif)
+The following diagram describes the relationship between the different components in the app
+
+![components relationship diagram](http://shimaatech.com/wp-content/uploads/2020/01/components_diagram.png)
+
+Because each component has one bloc only, sharing states between components should be done through
+services and listeners that are provided by the services.  
+For more info please check the [examples](https://github.com/shimaatech/bloc_component/tree/master/example)
 
 
 ## Library contents
@@ -31,7 +41,7 @@ It allows developers to structure their app into components, where each componen
 The library provides the following components in order to help structuring and manging the state
 of a flutter app:
 - `BaseBloc`: Used for managing the state of an app component
-- `Componen`: Describes an app component. Can be a page or part of page. Each component has its
+- `Component`: Describes an app component. Can be a page or part of page. Each component has its
 own bloc. The `Component` describes how to create the bloc and the component's view
 - `ComponentView`: The component's view. Has direct access to the bloc created by the `Component`
 and uses `StateBuilder` in order to build widgets according to the bloc's states

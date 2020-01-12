@@ -1,4 +1,4 @@
-# example
+# Simple Movies App
 
 An example of using the bloc_component library
 

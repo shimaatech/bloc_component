@@ -3,11 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'base_bloc.dart';
 
-/// StateBuilderConfig
 /// Used for configuring default behavior on specific states for all
 /// [StateBuilder]s
 class StateBuilderConfig {
-
   /// Called when the state is a loading state (extends [StateLoading] )
   Widget onLoading(BuildContext context, StateLoading state) {
     return Container();
@@ -24,9 +22,7 @@ class StateBuilderConfig {
   }
 }
 
-
-/// StateBuilder
-/// Built upon the famous [BlocBuilder] class
+/// Built upon [BlocBuilder] class
 /// Can be used for building a widget on a specific bloc state
 ///
 /// Note: You don't need to use the StateBuilder directly (although you can),
@@ -56,7 +52,6 @@ class StateBuilderConfig {
 /// ```
 class StateBuilder<B extends BaseBloc, S extends BlocState,
     L extends StateLoading, E extends StateError> extends StatelessWidget {
-
   /// Builder config. Can be overridden simply by settings it to
   /// a new implementation of [StateBuilderConfig]
   static StateBuilderConfig builderConfig = StateBuilderConfig();
@@ -64,16 +59,21 @@ class StateBuilder<B extends BaseBloc, S extends BlocState,
   /// Builder that will be called on the success state [S]
   /// See [BlocBuilder.builder]
   final BlocWidgetBuilder<S> builder;
+
   /// The bloc to interact with. If not provided, it will be searched in the
   /// [BuildContext]
   /// See [BlocBuilderBase.bloc]
   final B bloc;
+
   /// The builder that will be called on the error state [E]
   final BlocWidgetBuilder<E> onError;
+
   /// The builder that will be called on the loading state [L]
   final BlocWidgetBuilder<L> onLoading;
+
   /// The builder tha will be called on any other state
   final BlocWidgetBuilder<BlocState> onOther;
+
   /// Condition for calling the builder. Same as in [BlocBuilder]. Usually
   /// You don't need to override it. It will be automatically calculated
   /// according to the success, loading and error states that are provided.
@@ -88,7 +88,6 @@ class StateBuilder<B extends BaseBloc, S extends BlocState,
     this.onError,
     this.onOther,
   });
-
 
   bool _isLoadingState(BlocState state) {
     return L != StateLoading && state is L;
@@ -109,8 +108,7 @@ class StateBuilder<B extends BaseBloc, S extends BlocState,
   Widget build(BuildContext context) {
     BlocWidgetBuilder<L> onLoadingBuilder =
         onLoading ?? builderConfig.onLoading;
-    BlocWidgetBuilder<E> onErrorBuilder =
-        onError ?? builderConfig.onError;
+    BlocWidgetBuilder<E> onErrorBuilder = onError ?? builderConfig.onError;
     BlocWidgetBuilder<BlocState> onOtherBuilder =
         onOther ?? builderConfig.onOther;
 

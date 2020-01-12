@@ -4,15 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'base_bloc.dart';
 import 'state_builder.dart';
 
-/// Component
 /// A user interface component that extends a [StatelessWidget]
 /// A Component has its own bloc that extends [BaseBloc]
 /// You need to tell the component how to create the bloc by overriding the
 /// [createBloc] method and how to build the component view by overriding the
 /// [createView] method
 abstract class Component<B extends BaseBloc> extends StatelessWidget {
-
-  Component({Key key}): super(key: key);
+  Component({Key key}) : super(key: key);
 
   /// Used for creating the component's bloc
   B createBloc(BuildContext context);
@@ -42,11 +40,9 @@ abstract class Component<B extends BaseBloc> extends StatelessWidget {
   void stateListener(BuildContext context, BlocState state) {}
 }
 
-/// ComponentView
 /// Responsible for building the view of a [Component]
 /// It provides direct access to the bloc built by the [Component]
 abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
-
   /// The component bloc
   final B bloc;
 
@@ -73,7 +69,6 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
     );
   }
 
-  /// stateBuilder
   /// A utility method that wraps the [StateBuilder] that can be used for
   /// building a widget on a specific state [S]
   /// Example:
@@ -88,7 +83,6 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
   /// is the [builder] parameter.
   /// For more info about the parameters, check [stateBuilderWithLoading]
   Widget stateBuilder<S extends BlocState>({
-
     /// see [stateBuilderWithLoading]
     @required BlocWidgetBuilder<S> builder,
 
@@ -97,7 +91,6 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
 
     /// see [stateBuilderWithLoading]
     BlocWidgetBuilder<BlocState> onOther,
-
   }) {
     return stateBuilderWithLoading<S, StateLoading, StateError>(
       builder: builder,
@@ -106,7 +99,6 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
     );
   }
 
-  /// stateBuilderWithLoading
   /// A wrapper over [StateBuilder] that uses the component's [bloc]
   /// Can be used for building a widget based on a success state [S], a loading
   /// state [L] and an error state [E]
@@ -132,7 +124,6 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
   /// ```
   Widget stateBuilderWithLoading<S extends BlocState, L extends StateLoading,
       E extends StateError>({
-
     /// The builder to be called when the state [S] is yielded
     /// See [StateBuilder.builder]
     @required BlocWidgetBuilder<S> builder,
@@ -160,7 +151,6 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
     /// the default [onOther] builder
     /// See [StateBuilder.onOther]
     BlocWidgetBuilder<BlocState> onOther,
-
   }) {
     return StateBuilder<B, S, L, E>(
       bloc: bloc,
