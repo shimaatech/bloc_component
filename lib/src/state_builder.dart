@@ -50,8 +50,7 @@ class StateBuilderConfig {
 ///   builder: (context, success) => onSuccess(...)
 /// );
 /// ```
-class StateBuilder<B extends BaseBloc, S extends BlocState,
-    L extends StateLoading, E extends StateError> extends StatelessWidget {
+class StateBuilder<B extends BaseBloc, S extends BlocState> extends StatelessWidget {
   /// Builder config. Can be overridden simply by settings it to
   /// a new implementation of [StateBuilderConfig]
   static StateBuilderConfig builderConfig = StateBuilderConfig();
@@ -66,10 +65,10 @@ class StateBuilder<B extends BaseBloc, S extends BlocState,
   final B bloc;
 
   /// The builder that will be called on the error state [E]
-  final BlocWidgetBuilder<E> onError;
+  final BlocWidgetBuilder<StateError> onError;
 
   /// The builder that will be called on the loading state [L]
-  final BlocWidgetBuilder<L> onLoading;
+  final BlocWidgetBuilder<StateLoading> onLoading;
 
   /// The builder tha will be called on any other state
   final BlocWidgetBuilder<BlocState> onOther;
@@ -90,11 +89,11 @@ class StateBuilder<B extends BaseBloc, S extends BlocState,
   });
 
   bool _isLoadingState(BlocState state) {
-    return L != StateLoading && state is L;
+    return state is StateLoading;
   }
 
   bool _isErrorState(BlocState state) {
-    return E != StateError && state is E;
+    return state is StateError;
   }
 
   bool _rebuildCondition(BlocState prev, BlocState current) {
@@ -106,9 +105,9 @@ class StateBuilder<B extends BaseBloc, S extends BlocState,
 
   @override
   Widget build(BuildContext context) {
-    BlocWidgetBuilder<L> onLoadingBuilder =
+    BlocWidgetBuilder<StateLoading> onLoadingBuilder =
         onLoading ?? builderConfig.onLoading;
-    BlocWidgetBuilder<E> onErrorBuilder = onError ?? builderConfig.onError;
+    BlocWidgetBuilder<StateError> onErrorBuilder = onError ?? builderConfig.onError;
     BlocWidgetBuilder<BlocState> onOtherBuilder =
         onOther ?? builderConfig.onOther;
 

@@ -1,4 +1,4 @@
-#Examples
+# Examples
 
 Here you can find some fully-documented examples of using the **bloc_component** library
 

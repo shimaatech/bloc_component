@@ -25,19 +25,14 @@ abstract class Component<B extends BaseBloc> extends StatelessWidget {
       key: key,
       create: createBloc,
       child: Builder(
-        builder: (context) {
-          return BlocListener<B, BlocState>(
-            listener: stateListener,
-            child: createView(BlocProvider.of<B>(context)),
-          );
-        },
+        builder: _viewBuilder,
       ),
     );
   }
 
-  /// Used for listening to bloc states.
-  /// Can be used for logging, navigation or showing snack bars
-  void stateListener(BuildContext context, BlocState state) {}
+  Widget _viewBuilder(BuildContext context) {
+    return createView(BlocProvider.of<B>(context));
+  }
 }
 
 /// Responsible for building the view of a [Component]
@@ -48,54 +43,28 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
 
   ComponentView(this.bloc);
 
+  /// Used for listening to bloc states.
+  /// Can be used for logging, navigation or showing snack bars
+  void stateListener(BuildContext context, BlocState state) {}
+
   /// The view to show while the bloc is initializing
   /// If progress is used, then it is passed to the [loadingData] state
-  Widget onInitializing(BuildContext context, StateInitializing loadingData) =>
+  Widget onInitializing(BuildContext context, StateLoading loadingData) =>
       StateBuilder.builderConfig.onLoading(context, loadingData);
 
   /// The view to show on bloc initialization error. The error info will be
   /// passed in the [error] state
-  Widget onInitializingError(
-          BuildContext context, StateInitializationError error) =>
+  Widget onInitializingError(BuildContext context, StateError error) =>
       StateBuilder.builderConfig.onError(context, error);
 
   @override
   Widget build(BuildContext context) {
-    return stateBuilderWithLoading<StateInitialized, StateInitializing,
-        StateInitializationError>(
-      builder: (context, state) => buildView(context),
-      onLoading: onInitializing,
-      onError: onInitializingError,
-    );
-  }
-
-  /// A utility method that wraps the [StateBuilder] that can be used for
-  /// building a widget on a specific state [S]
-  /// Example:
-  ///
-  /// ```dart
-  /// stateBuilder<MyState>(
-  ///   builder: (context, state) => buildWidget(state.data)
-  /// );
-  /// ```
-  ///
-  /// In most cases, the only parameter that you need to pass to [stateBuilder]
-  /// is the [builder] parameter.
-  /// For more info about the parameters, check [stateBuilderWithLoading]
-  Widget stateBuilder<S extends BlocState>({
-    /// see [stateBuilderWithLoading]
-    @required BlocWidgetBuilder<S> builder,
-
-    /// see [stateBuilderWithLoading]
-    BlocBuilderCondition<BlocState> condition,
-
-    /// see [stateBuilderWithLoading]
-    BlocWidgetBuilder<BlocState> onOther,
-  }) {
-    return stateBuilderWithLoading<S, StateLoading, StateError>(
-      builder: builder,
-      condition: condition,
-      onOther: onOther,
+    return BlocListener<B, BlocState>(
+      bloc: bloc,
+      listener: stateListener,
+      child: bloc.initialState is StateUninitialized
+          ? _initializeAndBuild(context)
+          : buildView(context),
     );
   }
 
@@ -122,8 +91,7 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
   ///   builder: (context, successState) => buildWidget(....)
   /// )
   /// ```
-  Widget stateBuilderWithLoading<S extends BlocState, L extends StateLoading,
-      E extends StateError>({
+  Widget stateBuilder<S extends BlocState>({
     /// The builder to be called when the state [S] is yielded
     /// See [StateBuilder.builder]
     @required BlocWidgetBuilder<S> builder,
@@ -138,13 +106,13 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
     /// You can define a default loading behavior by overriding
     /// [StateBuilder.builderConfig]
     /// See [StateBuilder.onLoading]
-    BlocWidgetBuilder<L> onLoading,
+    BlocWidgetBuilder<StateLoading> onLoading,
 
     /// builder that is called when the state is error state [E]
     /// You can define a default error behavior by overriding
     /// [StateBuilder.builderConfig]
     /// See [StateBuilder.onError]
-    BlocWidgetBuilder<E> onError,
+    BlocWidgetBuilder<StateError> onError,
 
     /// builder that is called when other state than [S] appears
     /// It's better to override [StateBuilder.builderConfig] for specifying
@@ -152,7 +120,7 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
     /// See [StateBuilder.onOther]
     BlocWidgetBuilder<BlocState> onOther,
   }) {
-    return StateBuilder<B, S, L, E>(
+    return StateBuilder<B, S>(
       bloc: bloc,
       builder: builder,
       condition: condition,
@@ -164,4 +132,15 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
 
   /// Must override this method in order to build the component's view
   Widget buildView(BuildContext context);
+
+  Widget _initializeAndBuild(BuildContext context) {
+    return stateBuilder<StateInitialized>(
+        condition: (prev, curr) =>
+            curr is StateInitialized ||
+            curr is StateInitializing ||
+            curr is StateInitializationError,
+        builder: (context, state) => buildView(context),
+        onLoading: onInitializing,
+        onError: onInitializingError);
+  }
 }
