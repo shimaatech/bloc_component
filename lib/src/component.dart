@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'base_bloc.dart';
 import 'state_builder.dart';
 
-/// A user interface component that extends a [StatelessWidget]
+/// A UI component that extends a [StatelessWidget].
 /// A Component has its own bloc that extends [BaseBloc]
 /// You need to tell the component how to create the bloc by overriding the
 /// [createBloc] method and how to build the component view by overriding the
@@ -71,26 +71,17 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
   /// A wrapper over [StateBuilder] that uses the component's [bloc]
   /// Can be used for building a widget based on a success state [S], a loading
   /// state [L] and an error state [E]
-  /// If you don't want the widget to be rebuilt on error or loading, then use
-  /// [stateBuilder] method instead of this method.
-  /// If you want to handle errors, but not loading, then you can pass
-  /// [StateLoading] as the loading state [S]
+  /// If you don't want the widget to be rebuilt on error or loading, then set
+  /// [skipError] or [skipLoading] to true accordingly
   ///
   /// Example:
   ///
   /// ```dart
-  /// stateBuilderWithLoading<MySuccessState, MyLoadingState, MyErrorState>(
-  ///   builder: (context, successState) => buildWidget(....)
+  /// stateBuilderWithLoading<MyState>(
+  ///   builder: (context, state) => buildWidget(....)
   /// );
   /// ```
   ///
-  /// Example for handling error state [E] only
-  ///
-  /// ```dart
-  /// stateBuilderWithLoading<MySuccessState, StateLoading, MyErrorState>(
-  ///   builder: (context, successState) => buildWidget(....)
-  /// )
-  /// ```
   Widget stateBuilder<S extends BlocState>({
     /// The builder to be called when the state [S] is yielded
     /// See [StateBuilder.builder]
@@ -119,6 +110,16 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
     /// the default [onOther] builder
     /// See [StateBuilder.onOther]
     BlocWidgetBuilder<BlocState> onOther,
+
+    /// Set to true in order to not rebuild the widget on errors ([onError] won't
+    /// be called when there is an error.
+    /// See [StateBuilder.skipError]
+    bool skipError = false,
+
+    /// Set to true in order to not rebuild the widget on loading states
+    /// ([onLoading] won't be called when there is a loading state.
+    /// See [StateBuilder.skipLoading]
+    bool skipLoading = false,
   }) {
     return StateBuilder<B, S>(
       bloc: bloc,
@@ -127,6 +128,8 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
       onLoading: onLoading,
       onError: onError,
       onOther: onOther,
+      skipError: skipError,
+      skipLoading: skipLoading,
     );
   }
 

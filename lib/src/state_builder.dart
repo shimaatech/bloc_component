@@ -27,57 +27,59 @@ class StateBuilderConfig {
 ///
 /// Note: You don't need to use the StateBuilder directly (although you can),
 /// most of the times (even always), you should use [ComponentView.stateBuilder]
-/// and [ComponentView.stateBuilderWithLoading] methods instead.
+/// method instead.
 ///
 /// Example:
 ///
 /// ```dart
-/// StateBuilder<MyBloc, MySuccessState, MyLoadingState, MyErrorState>(
-///   builder: (context, success) => onSuccess(...)
-///   onLoading: (context, loading) => onLoading(...)
-///   onError: (context, error) => onError(...)
+/// StateBuilder<MyBloc, MyState>(
+///   builder: (context, state) => onState(...)
 /// );
 ///
 /// ```
-///
-/// If you are interested in the success state only, then pass [StateLoading]
-/// and [StateError] to the loading and error states. In this case, the
-/// StateBuilder won't be rebuilt when an error or loading states are emitted.
-/// Example:
-///
-/// ```dart
-/// StateBuilder<MyBloc, MySuccessState, StateLoading, StateError>(
-///   builder: (context, success) => onSuccess(...)
-/// );
+/// The state builder knows to handle loading and error states. Each state that
+/// extends [StateLoading] will be considered as loading state, and the [onLoading]
+/// callback will be called for it.
+/// And each state that extends [StateError] will be considered as error state, and
+/// the [onError] state will be called for it
 /// ```
-class StateBuilder<B extends BaseBloc, S extends BlocState> extends StatelessWidget {
+class StateBuilder<B extends BaseBloc, S extends BlocState>
+    extends StatelessWidget {
   /// Builder config. Can be overridden simply by settings it to
   /// a new implementation of [StateBuilderConfig]
   static StateBuilderConfig builderConfig = StateBuilderConfig();
 
-  /// Builder that will be called on the success state [S]
+  /// Builder that will be called on when the state is [S]
   /// See [BlocBuilder.builder]
   final BlocWidgetBuilder<S> builder;
 
   /// The bloc to interact with. If not provided, it will be searched in the
-  /// [BuildContext]
+  /// [BuildContext].
   /// See [BlocBuilderBase.bloc]
   final B bloc;
 
-  /// The builder that will be called on the error state [E]
+  /// The builder that will be called on any error state that extends [StateError]
   final BlocWidgetBuilder<StateError> onError;
 
-  /// The builder that will be called on the loading state [L]
+  /// The builder that will be called on any loading state that extends [StateLoading]
   final BlocWidgetBuilder<StateLoading> onLoading;
 
-  /// The builder tha will be called on any other state
+  /// The builder tha will be called on any other state that is not [S], [StateLoading] or [StateError]
   final BlocWidgetBuilder<BlocState> onOther;
 
   /// Condition for calling the builder. Same as in [BlocBuilder]. Usually
   /// You don't need to override it. It will be automatically calculated
-  /// according to the success, loading and error states that are provided.
+  /// according to the success, loading and error states.
   /// For more info about [condition], see [BlocBuilderBase.condition]
   final BlocBuilderCondition<BlocState> condition;
+
+  /// Set it to true if you don't want to handle error state (your widget won't
+  /// be rebuilt on error states that extend [StateError]).
+  final bool skipError;
+
+  /// Set it to true if you don't want to handle loading state (your widget won't
+  /// be rebuilt on loading states that extend [StateLoading])
+  final bool skipLoading;
 
   StateBuilder({
     @required this.builder,
@@ -86,6 +88,8 @@ class StateBuilder<B extends BaseBloc, S extends BlocState> extends StatelessWid
     this.onLoading,
     this.onError,
     this.onOther,
+    this.skipError = false,
+    this.skipLoading = false,
   });
 
   bool _isLoadingState(BlocState state) {
@@ -100,14 +104,17 @@ class StateBuilder<B extends BaseBloc, S extends BlocState> extends StatelessWid
     if (condition != null) {
       return condition(prev, current);
     }
-    return _isLoadingState(current) || _isErrorState(current) || current is S;
+    return (!skipLoading && _isLoadingState(current)) ||
+        (!skipError && _isErrorState(current)) ||
+        current is S;
   }
 
   @override
   Widget build(BuildContext context) {
     BlocWidgetBuilder<StateLoading> onLoadingBuilder =
         onLoading ?? builderConfig.onLoading;
-    BlocWidgetBuilder<StateError> onErrorBuilder = onError ?? builderConfig.onError;
+    BlocWidgetBuilder<StateError> onErrorBuilder =
+        onError ?? builderConfig.onError;
     BlocWidgetBuilder<BlocState> onOtherBuilder =
         onOther ?? builderConfig.onOther;
 

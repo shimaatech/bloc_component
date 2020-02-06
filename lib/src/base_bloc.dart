@@ -14,7 +14,7 @@ abstract class BlocState implements Equatable {
 /// [BaseBloc.initialize]
 class StateUninitialized extends BlocState {}
 
-/// Loading state. Used when the bloc is performing some action...
+/// Loading state. Used when the bloc is performing some action that takes time.
 class StateLoading extends BlocState {
   final double progress;
 
@@ -25,16 +25,16 @@ class StateLoading extends BlocState {
 }
 
 /// A state that indicates that the bloc is being initialized. Allows reporting
-/// [progress] of initializing
-/// This state is implemented with [StateLoading] so that it can be used as
-/// a loading state with the [StateBuilder]
+/// [progress] of initializing.
+/// This state extends [StateLoading] so that the [StateBuilder] can handle
+/// it correctly as a loading state
 class StateInitializing extends StateLoading {
   StateInitializing([double progress]) : super(progress);
 }
 
 /// Bloc error state
-/// Each state that needs tto allow error functionality to be used with the
-/// [StateBuilder[ must be implemented with [StateError]
+/// Each state that needs to allow error functionality to be used with the
+/// [StateBuilder] must extend [StateError]
 class StateError extends BlocState {
   final String message;
   final dynamic exception;
@@ -44,8 +44,14 @@ class StateError extends BlocState {
 
   @override
   List<Object> get props => [message, exception];
+
+  @override
+  String toString() {
+    return "Error: $message";
+  }
 }
 
+/// This state is emitted when there is an error with initializing the bloc
 class StateInitializationError extends StateError {
   StateInitializationError(String message,
       [dynamic exception, StackTrace stackTrace])
@@ -54,6 +60,7 @@ class StateInitializationError extends StateError {
 
 /// A state that indicates that the bloc is initialized
 class StateInitialized extends BlocState {}
+
 
 /// Bloc base event
 /// All events must inherit from [BlocEvent]
@@ -67,7 +74,10 @@ abstract class BlocEvent implements Equatable {
 class InitializeEvent extends BlocEvent {}
 
 /// A base bloc that extends the Bloc class for providing additional
-/// functionality. When the bloc is created, and [InitializeEvent] is dispatched.
+/// functionality. When the bloc is created, [InitializeEvent] is dispatched
+/// if the initial state is [StateUninitialized].
+/// If the state is not [StateUninitialized], then [InitializeEvent] won't be
+/// dispatched and the [initialize] method won't be called.
 /// In order to do some initializations, you can override the [initialize] method
 /// If you need to yield some state upon initialization, then you can use the
 /// [onInitialized] method

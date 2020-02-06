@@ -1,3 +1,7 @@
+## [0.1.3] - 2020-02-06
+
+* added skipError and skipLoading to the state builder
+
 ## [0.1.2] - 2020-01-29
 
 * Simplified BaseBloc and ComponentView stateBuilder()

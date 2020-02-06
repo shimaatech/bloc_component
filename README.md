@@ -283,7 +283,7 @@ class MoviesView extends ComponentView<MoviesBloc> {
 rebuilding widgets according to state changes. It wraps the `StateBuilder` class which wraps
 the `BlocBuilder` class of the [bloc](https://pub.dev/packages/bloc) library
 
-The `ComponentView` class provides 2 types of `stateBuilder`:
+The `ComponentView` class provides a `stateBuilder` utility:
 
 #### `stateBuilder`
 A state builder that calls the builder only on a specific state
@@ -297,105 +297,8 @@ A state builder that calls the builder only on a specific state
     /// The builder to be called when the state is S
     @required BlocWidgetBuilder<S> builder,
 
-    /// Condition for rebuilding widget. Same is the condition in the BlocBuilder of the BLoC
-    /// library. In most cases you don't need to provide the condition as its default is
-    /// "state is S"
-    BlocBuilderCondition<BlocState> condition,
-
-    /// The builder to be called another state rather than S is met. You don't need to pass
-    /// this parameter if you don't change the condition. And you can set a default builder
-    /// as explained later.
-    BlocWidgetBuilder<BlocState> onOther,
-
   })
 ```
-
-
-#### `stateBuilderWithLoading`
-
-This is the second type of state builder. It allows listening to loading and error states also
-For this you need to define a state that extends the `StateLoading` or the `StateError` mixin
-If you don't want to listen to error state, then you can pass StateError for error state E.
-If you don'tt want to listen to loading state, then you can pass StateLoading for loading state L.
-
-```dart
-  /// Allows building a widget on a specific state while taking care of loading and error states
-  Widget stateBuilderWithLoading<S extends BlocState, L extends StateLoading,
-      E extends StateError>({
-
-    /// The builder to be called when the state is S
-    @required BlocWidgetBuilder<S> builder,
-
-    /// The bloc rebuild condition... Usually there is no need to pass a
-    /// condition as by default it will be rebuilt when one of he states S, L or E are met 
-    BlocBuilderCondition<BlocState> condition,
-
-    /// builder that is called when the state is a loading state L
-    /// You can define a default loading behavior by overriding [StateBuilder.builderConfig]
-    BlocWidgetBuilder<L> onLoading,
-
-    /// builder that is called when the state is error state [E]
-    /// You can define a default error behavior by overriding [StateBuilder.builderConfig]
-    BlocWidgetBuilder<E> onError,
-
-    /// builder that is called when another state rather than [S] appears
-    /// It's better to override [StateBuilder.builderConfig] for specifying
-    /// the default [onOther] builder
-    BlocWidgetBuilder<BlocState> onOther,
-
-  })
-```
-
-
-#### An example of using `stateBuilderWithLoading`
-
-Let's assume that adding or removing a favorite movie takes some time. And you need to show the user
-that adding/removing favorite movie is in progress.  
-We can add the following state to the `MovieItemBloc`:
-
-```dart
-// A state that indicates that updating a favorite movie is in progress...
-// Please note that this state is extending the StateLoading state so that it can be used with
-// stateBuilderWithLoading
-class MovieItemStateUpdatingFavorite extends MovieItemState with StateLoading {}
-```
-
-We need to update the `_toggleFavorite()` method in order to yield our new state before updating
-the favorite status of the movie
-
-```dart
-  Stream<MovieItemState> _toggleFavorite() async* {
-    // notify that movie favorite status is being updated
-    yield MovieItemStateUpdatingFavorite();
-    if (_moviesServices.isFavorite(movie)) {
-      await _moviesServices.removeFavoriteMovie(movie);
-    } else {
-      await _moviesServices.addFavoriteMovie(movie);
-    }
-    yield* _notifyFavoriteUpdated();
-  }
-```
-
-In the `_buildFavoriteIcon()` method of the `movieItemView`, we need to use `stateBuilderWithLoading` instead of `stateBuilder`:
-
-```dart
-  Widget _buildFavoriteIcon() {
-    // use stateBuilderWithLoading and pass MovieItemStateUpdatingFavorite as a loading state.
-    // notice that we pass StateError as the error state because we are not interested in error
-    // states. Note that we pass onLoading parameter
-    return stateBuilderWithLoading<MovieItemStateFavoriteUpdated,
-            MovieItemStateUpdatingFavorite, StateError>(
-        // show a CircularProgressIndicator on loading. If you don't pass onLoading builder, then
-        // the default builder that is defined by the StateBuilder.builderConfig is used
-        onLoading: (context, loadingState) => CircularProgressIndicator(),
-        builder: (context, state) {
-          return GestureDetector(
-            child: Icon(state.isFavorite ? Icons.star : Icons.star_border),
-            onTap: () => bloc.event(MovieItemEventToggleFavorite()),
-          );
-        });
-  }
-``` 
 
 
 ### `StateBuilder` config
