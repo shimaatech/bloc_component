@@ -84,7 +84,7 @@ class MovieItemEventToggleFavorite extends MovieItemEvent {}
 // Here we define the bloc. It extends BaseBloc which receives MovieItemEvent and yields
 // MovieItemState.
 // This bloc is used for managing the state of a single movie item in the movies list
-class MovieItemBloc extends BaseBloc<MovieItemEvent, MovieItemState> {
+class MovieItemBloc extends BaseBloc {
   final MoviesServices _moviesServices;
   final Movie movie;
 

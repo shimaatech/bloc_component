@@ -1,3 +1,7 @@
+## [0.1.3+1] - 2020-02-06
+
+* docs updates
+
 ## [0.1.3] - 2020-02-06
 
 * added skipError and skipLoading to the state builder
