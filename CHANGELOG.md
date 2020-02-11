@@ -1,3 +1,7 @@
+## [0.1.4] - 2020-02-12
+
+* fixed Equatable stringify issue
+
 ## [0.1.3+1] - 2020-02-06
 
 * docs updates

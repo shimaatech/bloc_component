@@ -6,6 +6,9 @@ import 'package:bloc/bloc.dart';
 abstract class BlocState implements Equatable {
   @override
   List<Object> get props => [];
+
+  @override
+  bool get stringify => false;
 }
 
 /// The initial state of any bloc that extends [BaseBloc]
@@ -67,6 +70,9 @@ class StateInitialized extends BlocState {}
 abstract class BlocEvent implements Equatable {
   @override
   List<Object> get props => [];
+
+  @override
+  bool get stringify => false;
 }
 
 /// An event for initializing the blocs that inherit from [BaseBloc]
