@@ -62,7 +62,8 @@ abstract class ComponentView<B extends BaseBloc> extends StatelessWidget {
     return BlocListener<B, BlocState>(
       bloc: bloc,
       listener: stateListener,
-      child: bloc.initialState is StateUninitialized
+      child: bloc.initialState is StateUninitialized &&
+              bloc.state is StateUninitialized
           ? _initializeAndBuild(context)
           : buildView(context),
     );
