@@ -1,6 +1,6 @@
 name: bloc_component
 description: A library that helps structuring flutter apps using the BLoC library
-version: 0.1.5
+version: 0.1.6
 homepage: https://github.com/shimaatech/bloc_component.git
 
 environment:
@@ -13,6 +13,8 @@ dependencies:
   equatable: ^1.0.2
   flutter_bloc: ^3.1.0
   bloc: ^3.0.0
+  provider: ^4.0.4
+
 
 dev_dependencies:
   flutter_test:

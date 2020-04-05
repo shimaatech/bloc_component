@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 import 'base_bloc.dart';
 import 'state_builder.dart';
@@ -21,9 +22,10 @@ abstract class Component<B extends BaseBloc> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<B>(
+    return Provider<B>(
       key: key,
       create: createBloc,
+      dispose: (context, bloc) => bloc.close(),
       child: Builder(
         builder: _viewBuilder,
       ),
@@ -31,7 +33,7 @@ abstract class Component<B extends BaseBloc> extends StatelessWidget {
   }
 
   Widget _viewBuilder(BuildContext context) {
-    return createView(BlocProvider.of<B>(context));
+    return createView(Provider.of<B>(context));
   }
 }
 
