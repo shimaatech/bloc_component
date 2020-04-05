@@ -22,7 +22,7 @@ abstract class Component<B extends BaseBloc> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider<B>(
+    return InheritedProvider<B>(
       key: key,
       create: createBloc,
       dispose: (context, bloc) => bloc.close(),

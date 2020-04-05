@@ -1,3 +1,7 @@
+## [0.1.7] - 2020-04-05
+
+* Using InheritedProvider instead of Provider
+
 ## [0.1.6] - 2020-04-05
 
 * Using Provider instead of BlocProvider
