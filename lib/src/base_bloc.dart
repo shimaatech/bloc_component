@@ -117,10 +117,14 @@ abstract class BaseBloc extends Bloc<BlocEvent, BlocState> {
         yield StateInitialized();
         yield* onInitialized();
       } catch (e, stacktrace) {
-        yield StateError('Initialization error', e, stacktrace);
+        yield StateInitializationError('Initialization error', e, stacktrace);
       }
     } else if (_initialized) {
-      yield* eventToState(event);
+      try {
+        yield* eventToState(event);
+      } catch (e, stacktrace) {
+        yield StateError(e?.toString(), e, stacktrace);
+      }
     } else {
       throw Exception('Bloc is not initialized yet...');
     }

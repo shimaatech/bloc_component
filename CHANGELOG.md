@@ -1,3 +1,7 @@
+## [0.1.8] - 2020-04-25
+
+* handling error states
+
 ## [0.1.7] - 2020-04-05
 
 * Using InheritedProvider instead of Provider
