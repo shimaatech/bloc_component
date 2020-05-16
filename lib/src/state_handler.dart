@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'base_bloc.dart';
 
 abstract class BlocStateHandler {
-  Widget onLoading(StateLoading stateLoading);
+  Widget onLoading(BuildContext context, StateLoading stateLoading);
 
-  Widget onError(StateError stateError);
+  Widget onError(BuildContext context, StateError stateError);
 
-  Widget onOther(BlocState state);
+  Widget onOther(BuildContext context, BlocState state);
 }
 
 class GlobalStateHandler {
@@ -18,14 +18,14 @@ class GlobalStateHandler {
     _handler = handler;
   }
 
-  static Widget handle(BlocState state) {
+  static Widget handle(BuildContext context, BlocState state) {
     assert (_handler != null);
     if (state is StateLoading) {
-      return _handler.onLoading(state);
+      return _handler.onLoading(context, state);
     } else if (state is StateError) {
-      return _handler.onError(state);
+      return _handler.onError(context, state);
     } else {
-      return _handler.onOther(state);
+      return _handler.onOther(context, state);
     }
   }
 
