@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'base_bloc.dart';
 
-abstract class StateHandler {
+abstract class BlocStateHandler {
   Widget onLoading(StateLoading stateLoading);
 
   Widget onError(StateError stateError);
@@ -10,11 +10,11 @@ abstract class StateHandler {
   Widget onOther(BlocState state);
 }
 
-class GeneralStatesHandler {
+class GlobalStateHandler {
 
-  static StateHandler _handler;
+  static BlocStateHandler _handler;
 
-  static void setHandler(StateHandler handler) {
+  static void setHandler(BlocStateHandler handler) {
     _handler = handler;
   }
 
